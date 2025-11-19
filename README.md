@@ -297,17 +297,4 @@ Response:
 ### Rate Limiting
 - If you hit rate limit during testing, wait 15 minutes or restart the server
 
-## 📄 License
-
-This project is created for educational purposes as a college capstone project.
-
-## 👤 Author
-
-College Capstone Project - WhisperWall
-
----
-
-**Note:** This project strictly follows the tech stack specified for a typical Node.js + Express + MongoDB + Mongoose course project. No additional technologies or services are used beyond what is listed in the tech stack.
-
-
 
