@@ -1,0 +1,304 @@
+{
+  "info": {
+    "name": "WhisperWall API",
+    "description": "Postman collection for WhisperWall - Anonymous College Feedback System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5555",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Public Endpoints",
+      "item": [
+        {
+          "name": "Submit Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Canteen Food Quality Needs Improvement\",\n  \"content\": \"The food quality in the canteen has been declining. Please look into this matter.\",\n  \"category\": \"Canteen\",\n  \"tags\": [\"food\", \"quality\"],\n  \"contactEmail\": \"student@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/feedback",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feedback"]
+            }
+          }
+        },
+        {
+          "name": "Get Public Feedback List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feedback?page=1&limit=10&category=Canteen&search=food",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feedback"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "category",
+                  "value": "Canteen"
+                },
+                {
+                  "key": "search",
+                  "value": "food"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Feedback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feedback/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feedback", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "FEEDBACK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Endpoints",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.success && jsonData.data.token) {",
+                  "        pm.collectionVariables.set('adminToken', jsonData.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@college.edu\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get All Feedback (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/feedback?page=1&limit=10&category=Academics&status=open",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "feedback"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "category",
+                  "value": "Academics"
+                },
+                {
+                  "key": "status",
+                  "value": "open"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Feedback Details (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/feedback/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "feedback", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "FEEDBACK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Feedback Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in-progress\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/feedback/:id/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "feedback", ":id", "status"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "FEEDBACK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Reply to Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Thank you for your feedback. We are looking into this matter.\",\n  \"public\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/feedback/:id/reply",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "feedback", ":id", "reply"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "FEEDBACK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Feedback",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/feedback/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "feedback", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "FEEDBACK_ID_HERE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
+
+
